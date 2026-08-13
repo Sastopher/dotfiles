@@ -1,0 +1,16 @@
+# Never commit machine-local identity or secrets
+.gitconfig.local
+.zshrc.local
+*.local
+
+# Keys — belt and braces; these should never be in here anyway
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+known_hosts
+
+# Editor / OS noise
+*.swp
+*.swo
+.DS_Store

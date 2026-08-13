@@ -1,0 +1,30 @@
+{
+  "model": "opus",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Frog.aiff"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": { },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "theme": "dark-ansi",
+  "skipAutoPermissionPrompt": true
+}

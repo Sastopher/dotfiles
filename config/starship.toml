@@ -1,0 +1,97 @@
+# Starship prompt — Catppuccin Mocha, matched to ~/.tmux.conf and Ghostty.
+# This machine previously ran starship with no config file (stock defaults);
+# this is a new addition. Delete it to go back to stock.
+
+format = """
+[](surface0)\
+$directory\
+[](fg:surface0 bg:overlay0)\
+$git_branch\
+$git_status\
+[](fg:overlay0)\
+$fill\
+$nodejs$elixir$python$rust\
+$cmd_duration\
+$line_break\
+$character"""
+
+add_newline = true
+command_timeout = 1000
+
+[palettes.mocha]
+base = "#1e1e2e"
+surface0 = "#313244"
+overlay0 = "#6c7086"
+text = "#cdd6f4"
+blue = "#89b4fa"
+mauve = "#cba6f7"
+peach = "#fab387"
+green = "#a6e3a1"
+yellow = "#f9e2af"
+red = "#f38ba8"
+
+palette = "mocha"
+
+[fill]
+symbol = " "
+
+[directory]
+style = "fg:text bg:surface0"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " "
+
+[directory.substitutions]
+"Documents" = " "
+"Downloads" = " "
+"Dev" = " "
+
+[git_branch]
+symbol = ""
+style = "fg:base bg:overlay0"
+format = "[ $symbol $branch ]($style)"
+
+[git_status]
+style = "fg:base bg:overlay0"
+format = "[$all_status$ahead_behind ]($style)"
+conflicted = "= "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "? "
+stashed = "$ "
+modified = "! "
+staged = "+ "
+renamed = "» "
+deleted = "✘ "
+
+[cmd_duration]
+min_time = 2000
+style = "fg:yellow"
+format = "[  $duration ]($style)"
+
+[nodejs]
+symbol = ""
+style = "fg:green"
+format = "[ $symbol ($version) ]($style)"
+
+[elixir]
+symbol = ""
+style = "fg:mauve"
+format = "[ $symbol ($version) ]($style)"
+
+[python]
+symbol = ""
+style = "fg:yellow"
+format = "[ $symbol ($version) ]($style)"
+
+[rust]
+symbol = ""
+style = "fg:peach"
+format = "[ $symbol ($version) ]($style)"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold mauve)"

@@ -1,0 +1,37 @@
+# Ghostty config
+# Docs: https://ghostty.org/docs/config
+# Reload in-app: Cmd+Shift+,    |    List all options: `ghostty +show-config --default --docs`
+
+# ── Appearance ──────────────────────────────────────────────────────────────
+theme = Catppuccin Mocha
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+cursor-style = block
+cursor-style-blink = false
+mouse-hide-while-typing = true
+macos-titlebar-style = tabs
+
+# ── Keyboard ────────────────────────────────────────────────────────────────
+# CRITICAL: makes the (left) Option key send Alt/Meta so your tmux `M-a` prefix
+# works. Without this, Option+a types "å" instead of reaching tmux.
+macos-option-as-alt = left
+# Ghostty speaks the kitty keyboard protocol natively, so Shift+Enter is
+# disambiguated from Enter automatically — no per-app keymap needed. This is
+# what lets Claude Code insert a newline on Shift+Enter (through tmux, once
+# tmux extended-keys is on; see ~/.tmux.conf).
+
+# ── Clipboard ───────────────────────────────────────────────────────────────
+copy-on-select = clipboard
+clipboard-read = allow
+clipboard-write = allow
+
+# ── Shell ───────────────────────────────────────────────────────────────────
+# Ghostty injects shell-integration features (cursor, prompt marks, etc.)
+shell-integration = detect
+shell-integration-features = no-cursor,sudo,title
+
+# Tip: to auto-launch tmux on every new window, uncomment:
+command = /bin/zsh -lc "tmux new -A -s main"
