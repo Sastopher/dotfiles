@@ -9,6 +9,7 @@
 #   niche          : task (taskwarrior), timewarrior
 
 tap "homebrew/bundle"
+tap "withgraphite/tap"   # graphite CLI is not in homebrew-core
 
 # ── Shell & prompt ──────────────────────────────────────────────────────────
 brew "starship"          # prompt; config at ~/.config/starship.toml
@@ -30,6 +31,7 @@ brew "bat"
 brew "fd"                # fast find; pairs with fzf
 brew "tree"
 brew "direnv"            # per-project env vars; hooked in .zshrc
+brew "withgraphite/tap/graphite" # `gt` — stacked PRs on top of git; run `gt auth` after install
 
 # ── Languages & runtimes ────────────────────────────────────────────────────
 brew "asdf"              # versions pinned in ~/.tool-versions if configured
@@ -43,9 +45,10 @@ cask "karabiner-elements"           # see extras/karabiner
 cask "rectangle"                    # window management
 cask "flycut"                       # clipboard history
 cask "slack"
+cask "1password"                    # desktop app; sign in before the CLI works
+cask "1password-cli"                # `op`; needs the desktop app for biometric unlock
 
 # ── Manual installs (not in Homebrew / need SSO) ────────────────────────────
 #   - Chrome              https://google.com/chrome
 #   - Docker Desktop      (license check at a new company first)
 #   - Claude Code         curl -fsSL https://claude.ai/install.sh | bash
-#   - 1Password / Enpass  whatever the new company standardises on

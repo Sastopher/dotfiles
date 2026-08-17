@@ -1,2 +1,8 @@
 Host *
 	UseKeychain yes
+
+# 1Password SSH agent — uncomment after enabling it in the desktop app
+# (Settings → Developer → Use the SSH agent) and importing/creating a key there.
+# Pointing at the socket before the agent exists makes every ssh call fail, so
+# this stays commented until you have actually turned it on.
+#	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

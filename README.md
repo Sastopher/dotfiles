@@ -40,6 +40,7 @@ config/                       → symlinked into ~/.config
   git/ignore                  global gitignore
 claude/settings.json          Claude Code settings (copied, not symlinked)
 ssh/config                    minimal; copied only if ~/.ssh/config is absent
+                              (1Password agent line included but commented)
 extras/
   karabiner/                  caps→escape, fn↔ctrl (manual copy, see below)
 ```
@@ -65,6 +66,23 @@ tmux plugins are managed by **tpm installed from Homebrew**, not the usual
 `/opt/homebrew/opt/tpm/share/tpm/tpm`. `install.sh` runs tpm's `install_plugins`
 for you; inside tmux, `prefix + I` still works normally.
 
+## 1Password and Graphite
+
+Both ship in the `Brewfile`; both need a one-time auth step the installer can't
+do for you.
+
+- **1Password** — `1password` (desktop) + `1password-cli` (`op`). Sign in to the
+  desktop app first, then turn on *Settings → Developer → Integrate with 1Password
+  CLI* so `op` unlocks with Touch ID instead of prompting for the account
+  password. To use it as your SSH agent, enable *Settings → Developer → Use the
+  SSH agent* and uncomment the `IdentityAgent` line in `ssh/config` — in that
+  order, since ssh errors on every host if the socket isn't there yet.
+- **Graphite** — `gt`, installed from `withgraphite/tap` (it is not in
+  homebrew-core). Run `gt auth --token <token>` from
+  <https://app.graphite.dev/settings/cli>, then `gt init` inside each repo.
+  Shell completion is cached to `~/.cache/gt-completion.zsh` by `.zshrc`; delete
+  that file after a `gt` upgrade to pick up new commands.
+
 ## Manual steps after install
 
 1. `gh auth login`
@@ -75,8 +93,9 @@ for you; inside tmux, `prefix + I` still works normally.
    Copying before first launch gets the file overwritten. This maps
    caps lock → escape, escape → caps lock, and swaps fn ↔ left control.
 4. Grant Ghostty Accessibility / Full Disk Access if macOS prompts.
-5. Install anything from the "manual installs" list at the bottom of the
-   `Brewfile` (Chrome, Docker, Claude Code, password manager).
+5. Sign in to 1Password and run `gt auth` — see the section above.
+6. Install anything from the "manual installs" list at the bottom of the
+   `Brewfile` (Chrome, Docker, Claude Code).
 
 ## Machine-local, never committed
 
@@ -100,7 +119,7 @@ Worth knowing, since these are not a 1:1 restore:
   runtimes (elixir, python@3.12, postgresql@14) — install those per-project via
   `asdf` or `brew` once you know what the new job actually uses. `tmux` and
   `git` were transitive dependencies before and are now pinned explicitly.
-  Added: `fd`, `tree`, `direnv`.
+  Added: `fd`, `tree`, `direnv`, `graphite`, `1password` + `1password-cli`.
 - **No `~/.tool-versions` is shipped.** asdf is installed but unpinned, so a new
   machine starts with no global runtime versions. Set them per-project with
   `asdf local <tool> <version>`.

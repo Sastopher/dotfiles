@@ -32,6 +32,15 @@ autoload -Uz compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 command -v terraform >/dev/null && complete -o nospace -C "$(command -v terraform)" terraform
 
+# graphite: `gt completion` takes ~0.2s, so cache it instead of eval-ing at
+# every shell start. Delete the cache file after upgrading gt to regenerate.
+if command -v gt >/dev/null; then
+  GT_COMPLETION="${XDG_CACHE_HOME:-$HOME/.cache}/gt-completion.zsh"
+  [ -s "$GT_COMPLETION" ] || { mkdir -p "$(dirname "$GT_COMPLETION")"; gt completion > "$GT_COMPLETION"; }
+  . "$GT_COMPLETION"
+  unset GT_COMPLETION
+fi
+
 # ── PATH ────────────────────────────────────────────────────────────────────
 export PATH="$HOME/.local/bin:$PATH"
 

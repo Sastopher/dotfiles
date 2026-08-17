@@ -189,6 +189,9 @@ cat <<'EOF'
     2. gh auth login
     3. Karabiner-Elements: launch it, grant Input Monitoring, then
        cp extras/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
-    4. Restart your terminal (or: exec zsh)
+    4. 1Password: sign in, then Settings > Developer > Integrate with 1Password CLI
+       (and "Use the SSH agent" if you want the IdentityAgent line in ~/.ssh/config)
+    5. gt auth --token <token>   # https://app.graphite.dev/settings/cli
+    6. Restart your terminal (or: exec zsh)
 
 EOF
