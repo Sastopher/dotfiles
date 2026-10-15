@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "afplay /System/Library/Sounds/Frog.aiff"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-state.sh hook done"
           }
         ]
       }
@@ -17,6 +21,46 @@
           {
             "type": "command",
             "command": "afplay /System/Library/Sounds/Funk.aiff"
+          }
+        ]
+      },
+      {
+        "matcher": "permission_prompt|elicitation_dialog|elicitation_url_dialog|agent_needs_input",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-state.sh hook waiting"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-state.sh hook working"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-state.sh hook resume",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/tmux-state.sh hook clear"
           }
         ]
       }

@@ -39,6 +39,7 @@ config/                       → symlinked into ~/.config
   starship.toml               prompt, Catppuccin Mocha
   git/ignore                  global gitignore
 claude/settings.json          Claude Code settings (copied, not symlinked)
+claude/hooks/tmux-state.sh    → symlinked; Claude state on tmux panes/windows (see .tmux.conf)
 ssh/config                    minimal; copied only if ~/.ssh/config is absent
                               (1Password agent line included but commented)
 extras/

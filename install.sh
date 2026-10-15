@@ -120,6 +120,8 @@ else
   run cp "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
   ok "installed settings.json"
 fi
+# Hook scripts are symlinked: Claude Code only runs them, and settings.json calls them by path.
+link "$DOTFILES/claude/hooks/tmux-state.sh" "$HOME/.claude/hooks/tmux-state.sh"
 
 # ── 6. SSH config ───────────────────────────────────────────────────────────
 # Also copied — you will add work-specific hosts to it that should not be public.
