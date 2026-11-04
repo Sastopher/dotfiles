@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 # Ask specific Claude sessions to run /wrap, by typing it into their tmux panes.
 #
-#   wrap-send [--check] [--force] [--dry-run] <target>...   target: session name, pane id (%56) or tmux target (main:4.2)
+#   wrap-send [--check] [--force] [--dry-run] [--notify] <target>...   target: session name, pane id (%56) or tmux target (main:4.2)
 #   wrap-send --pick [--check] [--exclude PANE] fzf picker over Claude panes (Tab marks several)
 #
 # Sends "/wrap" (or "/wrap check" with --check; alt-c in the picker). A session busy with a turn
 # queues it and runs it next. A pane whose @claude_state is "waiting" has a dialog open, where
 # typed keys could answer it, so it is skipped unless --force. Background sessions with no
 # pane can't be reached this way: `claude attach <name>`, or ask a Claude session to SendMessage.
+# --notify reports in the tmux message line instead of stdout (for key bindings: prefix + W).
 
 set -uo pipefail
 
-mode=wrap force= pick= exclude= dry=
+mode=wrap force= pick= exclude= dry= notify=
 targets=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     --check) mode=check; shift ;;
     --force) force=1; shift ;;
     --dry-run) dry=1; shift ;;
+    --notify) notify=1; shift ;;
     --pick) pick=1; shift ;;
     --exclude) exclude=$2; shift 2 ;;
-    -h|--help) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) targets+=("$1"); shift ;;
   esac
 done
@@ -58,24 +60,26 @@ resolve() {
   esac
 }
 
+say() { if [[ -n $notify ]]; then tmux display-message "wrap: $*"; else echo "$*"; fi; }
+
 send() {
   local pane=$1 cmd state where
   cmd=$(tmux display -p -t "$pane" '#{pane_current_command}')
   where=$(tmux display -p -t "$pane" '#{session_name}:#{window_index}.#{pane_index} #{pane_title}')
   if [[ ! $cmd =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && $cmd != claude ]]; then
-    echo "skip  $where: not a Claude session ($cmd)"; return
+    say "skip  $where: not a Claude session ($cmd)"; return
   fi
   state=$(tmux display -p -t "$pane" '#{@claude_state}')
   if [[ $state == waiting && -z $force ]]; then
-    echo "skip  $where: a dialog is open (answer it first, or --force)"; return
+    say "skip  $where: a dialog is open (answer it first, or --force)"; return
   fi
   local text=/wrap; [[ $mode == check ]] && text="/wrap check"
-  [[ -n $dry ]] && { echo "would send  $where: $text"; return; }
+  [[ -n $dry ]] && { say "would send  $where: $text"; return; }
   # Typed text arriving in one burst reads as a paste; a pause lets Enter submit it.
   tmux send-keys -t "$pane" -l "$text"
   sleep 0.3
   tmux send-keys -t "$pane" Enter
-  echo "sent  $where: $text"
+  say "sent  $where: $text"
 }
 
 if [[ -n $pick ]]; then
@@ -92,9 +96,9 @@ if [[ -n $pick ]]; then
   exit 0
 fi
 
-[[ ${#targets[@]} -gt 0 ]] || { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
+[[ ${#targets[@]} -gt 0 ]] || { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
 rc=0
 for t in "${targets[@]}"; do
-  p=$(resolve "$t") && send "$p" || rc=1
+  if p=$(resolve "$t" 2>&1); then send "$p"; else say "$p"; rc=1; fi
 done
 exit $rc

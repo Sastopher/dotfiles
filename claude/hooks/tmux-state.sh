@@ -4,6 +4,7 @@
 #   tmux-state.sh hook <working|waiting|done|resume|clear>   from a Claude hook (hook JSON on stdin)
 #   tmux-state.sh viewed <window_id>                         from tmux, when a window comes into view
 #   tmux-state.sh next <pane_id>                             jump to the pane that has waited longest
+#   tmux-state.sh wrap <verdict>                             from the wrap skill: record this session's verdict
 #
 # Pane option @claude_state holds working, waiting (on you) or done (finished, not yet seen), and
 # @claude_since when it was set. Window option @claude_win holds the most urgent state among the
@@ -12,6 +13,11 @@
 #
 # done is never set on a pane already on screen, and clears when its window comes into view.
 # waiting stays until Claude moves on (a prompt, an approved tool call, or the turn ending).
+#
+# Pane option @claude_wrap holds the session's last /wrap verdict: quit (safe to quit or
+# superseded), you (waiting on you), parked or progress. Unlike done, it survives being seen,
+# and clears on the session's next prompt. Window option @claude_wrap_win holds the most urgent
+# verdict among the window's panes, you > progress > parked > quit.
 
 command -v tmux >/dev/null && tmux info >/dev/null 2>&1 || exit 0
 
@@ -25,6 +31,14 @@ rollup() {
     *working*) w=working ;;
   esac
   if [[ -n $w ]]; then tmux set -w -t "$1" @claude_win "$w"; else tmux set -wu -t "$1" @claude_win; fi
+  states=$(tmux list-panes -t "$1" -F '#{@claude_wrap}') w=
+  case $states in
+    *you*) w=you ;;
+    *progress*) w=progress ;;
+    *parked*) w=parked ;;
+    *quit*) w=quit ;;
+  esac
+  if [[ -n $w ]]; then tmux set -w -t "$1" @claude_wrap_win "$w"; else tmux set -wu -t "$1" @claude_wrap_win; fi
 }
 
 set_state() {
@@ -50,6 +64,8 @@ case $1 in
     sid=$(jq -r '.session_id // empty' 2>/dev/null)
     for pane in $(find_panes "$sid"); do
       cur=$(tmux display -p -t "$pane" '#{@claude_state}' 2>/dev/null) || continue
+      # A new prompt or the session ending makes the last verdict stale.
+      [[ $2 == working || $2 == clear ]] && tmux set -pu -t "$pane" @claude_wrap
       case $2 in
         working) set_state "$pane" working ;;
         waiting) set_state "$pane" waiting ;;
@@ -81,5 +97,19 @@ case $1 in
     else
       tmux switch-client -t "$target" \; select-window -t "$target" \; select-pane -t "$target"
     fi ;;
+
+  wrap)
+    # Run from a Claude session's Bash tool, which has the session id and, inside tmux, TMUX_PANE.
+    case $2 in
+      'SAFE TO QUIT'|SUPERSEDED|quit) v=quit ;;
+      'WAITING ON YOU'|you) v=you ;;
+      'IN PROGRESS'|progress) v=progress ;;
+      PARKED|parked) v=parked ;;
+      *) echo "tmux-state.sh wrap: unknown verdict: $2" >&2; exit 1 ;;
+    esac
+    for pane in $(find_panes "${CLAUDE_CODE_SESSION_ID:-}"); do
+      tmux set -p -t "$pane" @claude_wrap "$v"
+      rollup "$pane"
+    done ;;
 esac
 exit 0
