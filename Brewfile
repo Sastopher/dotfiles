@@ -8,7 +8,6 @@
 #   old-employer   : azure-cli, cloudflared, flyctl
 #   niche          : task (taskwarrior), timewarrior
 
-tap "homebrew/bundle"
 tap "withgraphite/tap"   # graphite CLI is not in homebrew-core
 
 # ── Shell & prompt ──────────────────────────────────────────────────────────

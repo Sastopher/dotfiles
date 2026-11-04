@@ -2,7 +2,9 @@
 eval "$(starship init zsh)"
 
 # ── Version manager ─────────────────────────────────────────────────────────
-[ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && . /opt/homebrew/opt/asdf/libexec/asdf.sh
+# Homebrew's asdf (0.16+) is the Go rewrite: no shell script to source anymore,
+# just put shims on PATH.
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # ── Aliases ─────────────────────────────────────────────────────────────────
 alias ls="ls -G"
@@ -50,3 +52,9 @@ command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 # ── Machine-local overrides (never committed) ───────────────────────────────
 # Work-specific env vars, tokens, internal tooling, company proxies.
 [ -f "$HOME/.zshrc.local" ] && . "$HOME/.zshrc.local"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/crollock/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/crollock/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/crollock/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/crollock/google-cloud-sdk/completion.zsh.inc'; fi

@@ -20,3 +20,9 @@ set backspace=indent,eol,start
 
 set clipboard+=unnamedplus
 
+" Default tabs to 2 spaces.
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+
