@@ -122,6 +122,8 @@ else
 fi
 # Hook scripts are symlinked: Claude Code only runs them, and settings.json calls them by path.
 link "$DOTFILES/claude/hooks/tmux-state.sh" "$HOME/.claude/hooks/tmux-state.sh"
+link "$DOTFILES/claude/hooks/wrap-send.sh" "$HOME/.claude/hooks/wrap-send.sh"
+link "$DOTFILES/claude/hooks/wrap-send.sh" "$HOME/.local/bin/wrap-send"
 
 # ── 6. SSH config ───────────────────────────────────────────────────────────
 # Also copied — you will add work-specific hosts to it that should not be public.
