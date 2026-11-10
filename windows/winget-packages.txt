@@ -1,0 +1,24 @@
+# Windows essentials, installed by windows/install.ps1 (the Brewfile's counterpart).
+# One winget package id per line; everything after # is a comment.
+# Already-installed packages are skipped, never upgraded — use `winget upgrade` for that.
+
+# ── Core ────────────────────────────────────────────────────────────────────
+Git.Git                       # git + Git Bash
+GitHub.cli                    # gh; also git's credential helper (windows/gitconfig)
+Microsoft.PowerShell          # pwsh 7; psmux's default shell
+
+# ── Terminal ────────────────────────────────────────────────────────────────
+Microsoft.WindowsTerminal
+marlocarlo.psmux              # native tmux clone; provides `tmux` and `psmux`
+DEVCOM.JetBrainsMonoNerdFont  # glyphs for the psmux status bar and starship
+Starship.Starship             # prompt; reads config/starship.toml
+
+# ── Editor ──────────────────────────────────────────────────────────────────
+Neovim.Neovim                 # `vim` is aliased to this
+equalsraf.win32yank           # clipboard provider for nvim's `clipboard=unnamedplus`
+
+# ── CLI ─────────────────────────────────────────────────────────────────────
+BurntSushi.ripgrep.MSVC
+junegunn.fzf
+sharkdp.fd
+sharkdp.bat

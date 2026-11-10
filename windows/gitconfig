@@ -1,0 +1,17 @@
+# Windows overrides, included after home/.gitconfig by the ~/.gitconfig stub
+# that windows/install.ps1 writes. Aliases and everything else come from the
+# shared file; only things that differ on Windows belong here.
+
+# The shared file points the helper at /opt/homebrew/bin/gh. An empty value
+# resets the list, then gh is found on PATH (GitHub.cli from winget).
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[core]
+	editor = nvim
+	# Git for Windows otherwise rewrites line endings; the repo is LF everywhere.
+	autocrlf = input

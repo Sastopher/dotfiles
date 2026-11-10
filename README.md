@@ -1,6 +1,7 @@
 # dotfiles
 
 macOS developer setup — Ghostty + tmux + vim/neovim + zsh, Catppuccin Mocha throughout.
+A smaller Windows layer lives in `windows/` — see [Windows](#windows).
 
 ## Bootstrap a new machine
 
@@ -44,7 +45,58 @@ ssh/config                    minimal; copied only if ~/.ssh/config is absent
                               (1Password agent line included but commented)
 extras/
   karabiner/                  caps→escape, fn↔ctrl (manual copy, see below)
+windows/                      Windows only; install.sh never touches it
 ```
+
+## Windows
+
+A deliberately small subset: git (aliases, settings, gh as credential
+helper), neovim, tmux via [psmux](https://github.com/psmux/psmux), the
+starship prompt, and a PowerShell profile with the same aliases. Requires
+PowerShell 7 and winget.
+
+```powershell
+git clone https://github.com/Sastopher/dotfiles.git
+pwsh -File dotfiles\windows\install.ps1          # -DryRun to preview, -NoWinget to skip packages
+```
+
+It doesn't symlink (that needs admin or Developer Mode). Each config location
+gets a tiny stub that includes or sources the repo file, so edits in the repo
+apply immediately, and if the repo moves you just re-run the installer:
+
+| Location | Stub points at |
+| --- | --- |
+| `~/.gitconfig` | `home/.gitconfig`, then `windows/gitconfig` (gh helper, nvim editor), then `~/.gitconfig.local` |
+| `%LOCALAPPDATA%\nvim\init.lua` | `home/.vimrc` + `config/nvim/init.lua` |
+| `~/.psmux.conf` | `windows/psmux.conf` |
+| `$PROFILE` | one appended line dot-sourcing `windows/profile.ps1`; the rest of your profile is kept |
+| Windows Terminal fragment | adds a *Catppuccin Mocha* scheme and a *tmux* profile (runs psmux's `tmux.exe`); `settings.json` is not edited |
+
+Anything replaced is backed up to `~/.dotfiles-backup/<timestamp>/`, the same
+as on the mac. An existing git identity in `~/.gitconfig` is moved into
+`~/.gitconfig.local`. Machine-local PowerShell goes in `~/.profile.local.ps1`.
+
+```
+windows/
+  install.ps1                 bootstrap (the install.sh counterpart)
+  winget-packages.txt         packages (the Brewfile counterpart)
+  gitconfig                   Windows-only git overrides
+  psmux.conf                  port of home/.tmux.conf
+  profile.ps1                 PowerShell aliases, EDITOR, starship, tmux pane titles
+  terminal-fragment.json      Windows Terminal scheme + profile
+```
+
+`windows/psmux.conf` is a copy of `.tmux.conf`, not an include of it, so
+**changes to keybindings or the status bar have to be made in both files.** The
+port leaves out the parts that can't work on Windows: the Ghostty
+terminal-features, tpm (the pain-control bindings are written out inline), the
+`pbcopy` yank (psmux copies to the Windows clipboard on its own), and the
+Claude Code pane-state hooks, which are bash. Claude Code's `settings.json`
+isn't installed on Windows for the same reason (its hooks call `afplay` and
+those scripts).
+
+To start every terminal tab in tmux, as Ghostty does, pick *tmux* as the
+default profile in Windows Terminal → Settings → Startup.
 
 ## The terminal stack
 
